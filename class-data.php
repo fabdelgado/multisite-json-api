@@ -7,6 +7,9 @@ use Validations_for_API\Validations;
 include_once(__DIR__ . '/class-validations.php');
 
 require_once( ABSPATH . 'wp-admin/includes/admin.php' );
+require_once( ABSPATH . 'wp-includes/class-wp-error.php');
+
+use WP_REST_Response;
 
 class Information
 {
@@ -66,10 +69,10 @@ class Information
                $site_id = wpmu_create_blog($domain,$siteName, $title, $user, array('public' => true));
                 return $site_id;
            }else{
-               return false;
+               return new \WP_REST_Response(array('error' => 'The site title is not valid.'), 400);
            }
         }else{
-            return false;
+            return new \WP_REST_Response(array('error' => 'The site name is not valid.'), 400);
         }
     }
 
@@ -89,7 +92,7 @@ class Information
             $deleteme->deleted = true;
             return $deleteme;
         } else {
-            return false;
+            return new \WP_REST_Response(array('error' => 'The site you are trying to delete does not exist.'), 400);
         }
     }
 }
