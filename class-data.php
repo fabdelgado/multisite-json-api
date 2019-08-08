@@ -3,22 +3,24 @@
 namespace Data_for_API;
 
 use Validations_for_API\Validations;
+use Multisite_JSON_API\Utilities;
 
 include_once(__DIR__ . '/class-validations.php');
+include_once(__DIR__ . '/class-utilities.php');
+require_once(ABSPATH . 'wp-admin/includes/admin.php');
+require_once(ABSPATH . 'wp-includes/class-wp-error.php');
 
-require_once( ABSPATH . 'wp-admin/includes/admin.php' );
-require_once( ABSPATH . 'wp-includes/class-wp-error.php');
-
-use WP_REST_Response;
 
 class Information
 {
 
     protected $validation;
+    protected $endpoint;
 
     public function __construct()
     {
         $this->validation = new Validations();
+        $this->endpoint = new Utilities();
     }
 
     public function wp_get_all_sites()
@@ -60,18 +62,27 @@ class Information
         $siteName = $json['site'];
         $user = $json['userId'];
         $domain = $json['domain'];
+        $email = $json['email'];
 
         //Validate name site
-        if ($this->validation->is_valid_sitename($siteName)){
+        if ($this->validation->is_valid_sitename($siteName)) {
             //Validate site title
-           if($this->validation->is_valid_site_title($title)){
-               $currentSite = get_current_site();
-               $site_id = wpmu_create_blog($domain,$siteName, $title, $user, array('public' => true));
-                return $site_id;
-           }else{
-               return new \WP_REST_Response(array('error' => 'The site title is not valid.'), 400);
-           }
-        }else{
+            if ($this->validation->is_valid_site_title($title)) {
+                //Check if email is valid or instead create the user
+                $userID = $this->endpoint->is_valid_email_or_create_email($email,$siteName);
+                if($userID){
+                    $site_id = wpmu_create_blog($domain, $siteName, $title, $user, array('public' => true));
+                    if(!$site_id){
+                       user_to_blog($site_id, $userID, 'administrator');
+                       return $site_id;
+                    }
+                }else{
+                    return new \WP_REST_Response(array('error' => 'The email is not valid'), 400);
+                }
+            } else {
+                return new \WP_REST_Response(array('error' => 'The site title is not valid.'), 400);
+            }
+        } else {
             return new \WP_REST_Response(array('error' => 'The site name is not valid.'), 400);
         }
     }
@@ -87,7 +98,7 @@ class Information
 
         $deleteme = get_blog_details($siteId);
 
-        if($deleteme != false && $deleteme->blog_id == $siteId){
+        if ($deleteme != false && $deleteme->blog_id == $siteId) {
             wpmu_delete_blog($siteId, $drop = false);
             $deleteme->deleted = true;
             return $deleteme;

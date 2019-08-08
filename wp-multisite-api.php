@@ -10,12 +10,12 @@ Author URI: http://github.com/fabdelgado
 License: GPLv2 or later
 */
 
-require_once(__DIR__ . '/class-endpoint.php');
+require_once(__DIR__ . '/class-utilities.php');
 include_once(__DIR__ . '/class-data.php');
 include_once(__DIR__ . '/class-validations.php');
 
 use Data_for_API\Information;
-use Multisite_JSON_API\Endpoint;
+use Multisite_JSON_API\Utilities;
 
 /*
  * Route for list all objects multisite
@@ -28,11 +28,10 @@ add_action( 'rest_api_init', function(){
         array(
             'methods'  => 'POST',
             'callback' => array(new Information(), 'wp_get_all_sites'),
-            'permission_callback' => array(new Endpoint(), 'authenticate'),
+            'permission_callback' => array(new Utilities(), 'authenticate'),
         )
     );
 } );
-
 
 /*
  * Route for create multisite
@@ -45,13 +44,10 @@ add_action( 'rest_api_init', function(){
         array(
             'methods'  => 'POST',
             'callback' => array(new Information(), 'wp_create_multisite'),
-            'permission_callback' => array(new Endpoint(), 'authenticate'),
+            'permission_callback' => array(new Utilities(), 'authenticate'),
         )
     );
 } );
-
-
-
 
 /*
  * Route for create multisite
@@ -64,7 +60,7 @@ add_action( 'rest_api_init', function(){
         array(
             'methods'  => 'POST',
             'callback' => array(new Information(), 'wp_delete_multisite'),
-            'permission_callback' => array(new Endpoint(), 'authenticate'),
+            'permission_callback' => array(new Utilities(), 'authenticate'),
         )
     );
 } );
