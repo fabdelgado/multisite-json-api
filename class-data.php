@@ -71,8 +71,10 @@ class Information
                 //Check if email is valid or instead create the user
                 $userID = $this->endpoint->is_valid_email_or_create_email($email,$siteName);
                 if($userID){
+                    //Create a site
                     $site_id = wpmu_create_blog($domain, $siteName, $title, $user, array('public' => true));
                     if(!$site_id){
+                        //Assign user to site after create
                        user_to_blog($site_id, $userID, 'administrator');
                        return $site_id;
                     }
