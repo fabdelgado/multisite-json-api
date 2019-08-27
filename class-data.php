@@ -61,9 +61,12 @@ class Information
         $title = $json['title'];
         $siteName = $json['site'];
         $user = $json['userId'];
-        $domain = $json['domain'];
+        $domain  = $siteName . $_SERVER['REQUEST_URI'];
+        $path = '/';
         $email = $json['email'];
 
+
+        var_dump($title);
         //Validate name site
         if ($this->validation->is_valid_sitename($siteName)) {
             //Validate site title
@@ -72,7 +75,7 @@ class Information
                 $userID = $this->endpoint->is_valid_email_or_create_email($email,$siteName);
                 if($userID){
                     //Create a site
-                    $site_id = wpmu_create_blog($domain, $siteName, $title, $user, array('public' => true));
+                    $site_id = wpmu_create_blog($domain, $path, $title, $user, array('public' => true));
                     if(!$site_id){
                         //Assign user to site after create
                        user_to_blog($site_id, $userID, 'administrator');

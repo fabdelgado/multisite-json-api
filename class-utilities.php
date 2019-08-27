@@ -68,7 +68,7 @@ class Utilities
                 $user_id = wpmu_create_user($email, $password, $email);
                 //wp_new_user_notification($user_id, $password);
                 if ($user_id){
-                    return $user_id->ID;
+                    return $user_id;
                 }else{
                     return false;
                 }

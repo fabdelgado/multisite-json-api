@@ -69,3 +69,7 @@ Delete Site
 License
 -------
 Same as WordPress GPLv2.
+
+
+Based on the work of @remkade
+https://github.com/remkade/multisite-json-api

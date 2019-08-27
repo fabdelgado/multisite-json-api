@@ -7,7 +7,8 @@ Description: Create multisite api
 Version: 1.0.0
 Author: Fabian Delgado
 Author URI: http://github.com/fabdelgado
-License: GPLv2 or later
+License: GPLv2
+License URL: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 require_once(__DIR__ . '/class-utilities.php');
